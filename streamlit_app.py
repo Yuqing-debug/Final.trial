@@ -48,6 +48,7 @@ page = st.sidebar.selectbox(
         "Visualization 📈",
         "Prediction 🤖",
         "Feature Importance 📊",
+        "Explainability 🔍",
         "MLflow Runs 🧪",
     ],
 )
@@ -411,6 +412,47 @@ elif page == "Feature Importance 📊":
     st.pyplot(fig)
 
 
+
+
+elif page == "Explainability 🔍":
+    st.subheader("🔎 Explainability with SHAP")
+
+    # 数据处理
+    df_encoded = pd.get_dummies(df, columns=['Geography'])
+    df_encoded['Gender'] = df_encoded['Gender'].map({'Male': 0, 'Female': 1})
+    X = df_encoded.drop('Exited', axis=1)
+    y = df_encoded['Exited']
+    X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, test_size=0.2, random_state=42)
+
+    # 模型
+    model = RandomForestClassifier(n_estimators=100, random_state=42)
+    model.fit(X_train, y_train)
+
+    # SHAP
+    explainer = shap.TreeExplainer(model)
+    shap_values = explainer.shap_values(X_test)  # 3D: (samples, features, classes)
+
+    # 构造全局解释对象
+    shap_exp_global = shap.Explanation(
+        values=shap_values[:100][:, :, 1],
+        base_values=explainer.expected_value[1],
+        data=X_test.iloc[:100],
+        feature_names=X_test.columns
+    )
+
+    st.subheader("📊 Global Feature Importance (SHAP)")
+    st_shap(shap.plots.bar(shap_exp_global))
+    idx = st.slider("Choose a test sample index", 0, X_test.shape[0]-1, 0)
+    # 局部解释
+    shap_exp_local = shap.Explanation(
+        values=shap_values[0][:, 1],
+        base_values=explainer.expected_value[1],
+        data=X_test.iloc[0],
+        feature_names=X_test.columns
+    )
+
+    st.subheader("🔍 Local Explanation for First Customer")
+    st_shap(shap.plots.waterfall(shap_exp_local), height=400)
 
 # MLFlow Runs Page
 
