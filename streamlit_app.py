@@ -442,7 +442,7 @@ elif page == "Explainability 🔍":
 
     st.subheader("📊 Global Feature Importance (SHAP)")
     st_shap(shap.plots.bar(shap_exp_global))
-    idx = st.slider("Choose a test sample index", 0, X_test.shape[0]-1, 0)
+    
     # 局部解释
     shap_exp_local = shap.Explanation(
         values=shap_values[0][:, 1],
