@@ -441,7 +441,7 @@ elif page == "Explainability 🔍":
     )
 
     st.subheader("📊 Global Feature Importance (SHAP)")
-    st_shap(shap.plots.bar(shap_exp_global))
+    st_shap(shap.plots.bar(shap_exp_global), width=1000)
     
     # 局部解释
     shap_exp_local = shap.Explanation(
@@ -452,7 +452,7 @@ elif page == "Explainability 🔍":
     )
 
     st.subheader("🔍 Local Explanation for First Customer")
-    st_shap(shap.plots.waterfall(shap_exp_local), height=400)
+    st_shap(shap.plots.waterfall(shap_exp_local), height=400, width=1000)
 
 # MLFlow Runs Page
 
