@@ -8,3 +8,4 @@ dagshub
 shap
 scikit-learn
 xgboost
+streamlit-shap
